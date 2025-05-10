@@ -1,5 +1,6 @@
 # template.rb
-# This script will be run by `rails new` with `-m` option
+# Run this script with:
+# rails new my_app -T -d postgresql --skip-javascript -m https://raw.githubusercontent.com/msypniewski511/rails-stimulus-template/main/template.rb
 
 say "🛠 Setting up Tailwind, Stimulus, CableReady, StimulusReflex, Mrujs..."
 
@@ -60,7 +61,7 @@ gsub_file "config/environments/development.rb", /config\.cache_store = :memory_s
     expire_after: 1.year
 RUBY
 
-# ActionCable
+# ActionCable setup
 create_file "config/cable.yml", <<~YAML
   development:
     adapter: redis
@@ -68,16 +69,19 @@ create_file "config/cable.yml", <<~YAML
     channel_prefix: your_app_development
 YAML
 
-# Optional UUID setup
+# UUID as default primary key
 create_file "config/initializers/generators.rb", <<~RUBY
   Rails.application.config.generators do |g|
     g.orm :active_record, primary_key_type: :uuid
   end
 RUBY
 
-# Final reminder
-say "✅ Template applied. Now run:"
-say "bundle install"
-say "rails stimulus_reflex:install"
-say "rails generate stimulus controller example"
-say "Done!"
+after_bundle do
+  say "Cleaning up importmap (if accidentally installed)..."
+  run "bin/rails importmap:uninstall" rescue nil
+
+  say "Installing stimulus_reflex..."
+  run "rails stimulus_reflex:install"
+
+  say "Done!"
+end
