@@ -77,13 +77,6 @@ create_file "config/initializers/generators.rb", <<~RUBY
 RUBY
 
 after_bundle do
-  say "Cleaning up importmap (if accidentally installed)..."
-  begin
-    run("bin/rails importmap:uninstall")
-  rescue
-    say("Importmap not found, skipping.")
-  end
-
   say "Installing stimulus_reflex..."
   run "rails stimulus_reflex:install"
 
