@@ -1,10 +1,10 @@
 # template.rb
-# Run this script with:
-# rails new my_app -T -d postgresql --skip-javascript -m https://raw.githubusercontent.com/msypniewski511/rails-stimulus-template/main/template.rb
+# Run with:
+# rails new my_app -T -d postgresql --css=tailwind --javascript=esbuild -m https://raw.githubusercontent.com/msypniewski511/rails-stimulus-template/main/template.rb
 
-say "🛠 Setting up Tailwind, Stimulus, CableReady, StimulusReflex, Mrujs..."
+say "🛠 Setting up Tailwind, StimulusReflex, CableReady, Mrujs..."
 
-# Tailwind CSS and ESBuild setup
+# Tailwind + ESBuild config
 run "yarn add postcss-import chokidar @tailwindcss/forms"
 create_file "postcss.config.js", <<~JS
   module.exports = {
@@ -16,7 +16,6 @@ create_file "postcss.config.js", <<~JS
   }
 JS
 
-# Tailwind entry point
 empty_directory "app/assets/stylesheets"
 create_file "app/assets/stylesheets/application.tailwind.css", <<~CSS
   @tailwind base;
@@ -24,7 +23,6 @@ create_file "app/assets/stylesheets/application.tailwind.css", <<~CSS
   @tailwind utilities;
 CSS
 
-# Tailwind config
 create_file "tailwind.config.js", <<~JS
   module.exports = {
     mode: 'jit',
@@ -41,35 +39,35 @@ create_file "tailwind.config.js", <<~JS
   }
 JS
 
-# Add required gems
+# Gems
 append_to_file "Gemfile", <<~RUBY
-
   gem "stimulus_reflex", "~> 3.5"
   gem "redis-session-store", "~> 0.11.6"
 RUBY
 
-# Redis caching config
-gsub_file "config/environments/development.rb", /config\.cache_store = :memory_store/, <<~RUBY.chomp
-  config.cache_store = :redis_cache_store, {
-    url: ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" }
-  }
+# Redis dev env config
+inject_into_file "config/environments/development.rb", before: /^end/ do
+  <<~RUBY
 
-  config.session_store :redis_session_store,
-    key: "_sessions_development",
-    compress: true,
-    pool_size: 5,
-    expire_after: 1.year
-RUBY
+    config.cache_store = :redis_cache_store, {
+      url: ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" }
+    }
 
-# ActionCable setup
+    config.session_store :redis_session_store,
+      key: "_sessions_development",
+      compress: true,
+      pool_size: 5,
+      expire_after: 1.year
+  RUBY
+end
+
 create_file "config/cable.yml", <<~YAML
   development:
     adapter: redis
     url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
-    channel_prefix: your_app_development
+    channel_prefix: my_app_development
 YAML
 
-# UUID as default primary key
 create_file "config/initializers/generators.rb", <<~RUBY
   Rails.application.config.generators do |g|
     g.orm :active_record, primary_key_type: :uuid
@@ -77,15 +75,14 @@ create_file "config/initializers/generators.rb", <<~RUBY
 RUBY
 
 after_bundle do
-  say "Cleaning up importmap (if accidentally installed)..."
-  begin
-    run("bin/rails importmap:uninstall")
-  rescue
-    say("Importmap not found, skipping.")
+  say "🧠 Post-install: Checking JS bundler..."
+
+  if File.exist?("package.json") && File.read("package.json").include?("esbuild")
+    say "💡 JavaScript detected — running StimulusReflex install"
+    run "rails stimulus_reflex:install"
+  else
+    say "⚠️ Skipping StimulusReflex install — JavaScript bundler not detected."
   end
 
-  say "Installing stimulus_reflex..."
-  run "rails stimulus_reflex:install"
-
-  say "Done!"
+  say "✅ Done!"
 end
