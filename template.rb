@@ -1,21 +1,32 @@
-# template.rb
 # Run with:
 # rails new my_app -T -d postgresql --css=tailwind --javascript=esbuild -m https://raw.githubusercontent.com/msypniewski511/rails-stimulus-template/main/template.rb
 
-say "🛠 Setting up Tailwind, StimulusReflex, CableReady, Mrujs..."
+say "🛠 Setting up Tailwind, StimulusReflex, CableReady, Redis, Mrujs..."
 
-# Tailwind + ESBuild config
-run "yarn add postcss-import chokidar @tailwindcss/forms"
-create_file "postcss.config.js", <<~JS
-  module.exports = {
-    plugins: [
-      require('postcss-import'),
-      require('tailwindcss'),
-      require('autoprefixer'),
-    ]
-  }
-JS
+# ⬇️ Clone and apply external template files (e.g., package.json, tailwind.config.js)
+REPO_URL = "https://github.com/msypniewski511/rails-stimulus-template.git"
+TEMP_CLONE_PATH = "tmp_template_clone"
 
+say "🔄 Cloning files from #{REPO_URL}..."
+run "git clone --depth=1 #{REPO_URL} #{TEMP_CLONE_PATH}"
+
+%w[
+  package.json
+  yarn.lock
+  postcss.config.js
+  tailwind.config.js
+].each do |file|
+  source = File.join(TEMP_CLONE_PATH, file)
+  run "cp #{source} ./#{file}" if File.exist?(source)
+end
+
+run "rm -rf #{TEMP_CLONE_PATH}"
+
+# Reinstall node dependencies
+say "📦 Installing Yarn packages from updated package.json..."
+run "yarn install"
+
+# Create Tailwind entrypoint
 empty_directory "app/assets/stylesheets"
 create_file "app/assets/stylesheets/application.tailwind.css", <<~CSS
   @tailwind base;
@@ -23,29 +34,17 @@ create_file "app/assets/stylesheets/application.tailwind.css", <<~CSS
   @tailwind utilities;
 CSS
 
-create_file "tailwind.config.js", <<~JS
-  module.exports = {
-    mode: 'jit',
-    content: [
-      './app/views/**/*.html.erb',
-      './app/helpers/**/*.rb',
-      './app/assets/stylesheets/**/*.css',
-      './app/javascript/**/*.js',
-    ],
-    theme: {
-      extend: {},
-    },
-    plugins: [require('@tailwindcss/forms')],
-  }
-JS
-
-# Gems
+# Gemfile additions
 append_to_file "Gemfile", <<~RUBY
+
+  # ✅ Real-time & Reflex
   gem "stimulus_reflex", "~> 3.5"
+  gem "cable_ready"
+  gem "redis", "~> 4.0"
   gem "redis-session-store", "~> 0.11.6"
 RUBY
 
-# Redis dev env config
+# Redis session store config (development)
 inject_into_file "config/environments/development.rb", before: /^end/ do
   <<~RUBY
 
@@ -61,30 +60,37 @@ inject_into_file "config/environments/development.rb", before: /^end/ do
   RUBY
 end
 
+# Action Cable Redis config
 create_file "config/cable.yml", <<~YAML
   development:
     adapter: redis
     url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
     channel_prefix: my_app_development
+
+  test:
+    adapter: test
+
+  production:
+    adapter: redis
+    url: <%= ENV["REDIS_URL"] %>
+    channel_prefix: my_app_production
 YAML
 
+# UUID default for models
 create_file "config/initializers/generators.rb", <<~RUBY
   Rails.application.config.generators do |g|
     g.orm :active_record, primary_key_type: :uuid
   end
 RUBY
 
+# After dependencies installed
 after_bundle do
-  say "🧠 Post-install: Checking JS bundler..."
-  say "Installing ESBuild..."
+  say "🧠 Post-install: Setting up JavaScript and Reflex..."
+
   run "rails javascript:install:esbuild"
 
-  if File.exist?("package.json") && File.read("package.json").include?("esbuild")
-    say "💡 JavaScript detected — running StimulusReflex install"
-    run "rails stimulus_reflex:install"
-  else
-    say "⚠️ Skipping StimulusReflex install — JavaScript bundler not detected."
-  end
+  # StimulusReflex & CableReady
+  run "rails stimulus_reflex:install"
 
-  say "✅ Done!"
+  say "✅ Setup complete!"
 end
