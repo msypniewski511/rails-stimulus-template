@@ -78,7 +78,6 @@ RUBY
 
 after_bundle do
   say "Cleaning up importmap (if accidentally installed)..."
-  run "bin/rails importmap:uninstall" rescue nil
 
   say "Installing stimulus_reflex..."
   run "rails stimulus_reflex:install"
