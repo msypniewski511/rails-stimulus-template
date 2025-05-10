@@ -76,6 +76,8 @@ RUBY
 
 after_bundle do
   say "🧠 Post-install: Checking JS bundler..."
+  say "Installing ESBuild..."
+  run "rails javascript:install:esbuild"
 
   if File.exist?("package.json") && File.read("package.json").include?("esbuild")
     say "💡 JavaScript detected — running StimulusReflex install"
