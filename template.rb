@@ -75,7 +75,6 @@ create_file "config/initializers/generators.rb", <<~RUBY
 RUBY
 
 after_bundle do
-<<<<<<< HEAD
   say "🧠 Post-install: Checking JS bundler..."
 
   if File.exist?("package.json") && File.read("package.json").include?("esbuild")
@@ -84,10 +83,6 @@ after_bundle do
   else
     say "⚠️ Skipping StimulusReflex install — JavaScript bundler not detected."
   end
-=======
-  say "Installing stimulus_reflex..."
-  run "rails stimulus_reflex:install"
->>>>>>> 58471bee24df1f8d2398dd8828b67feb5e4ef201
 
   say "✅ Done!"
 end
