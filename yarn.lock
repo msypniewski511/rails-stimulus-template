@@ -157,7 +157,7 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.25.4.tgz#0b17ec8a70b2385827d52314c1253160a0b9bacc"
   integrity sha512-nOT2vZNw6hJ+z43oP1SPea/G/6AbN6X+bGNhNuq8NtRHy4wsMhw765IKLNmnjek7GvjWBYQ8Q5VBoYTFg9y1UQ==
 
-"@hotwired/stimulus@^3.2.2":
+"@hotwired/stimulus@^3", "@hotwired/stimulus@^3.2.2":
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/@hotwired/stimulus/-/stimulus-3.2.2.tgz#071aab59c600fed95b97939e605ff261a4251608"
   integrity sha512-eGeIqNOQpXoPAIP7tC1+1Yc1yl1xnwYqg+3mzqxyrbE5pg5YFBZcA6YoTiByJB6DKAEsiWtl6tjTJS4IYtbB7A==
@@ -312,7 +312,7 @@
     "@parcel/watcher-win32-ia32" "2.5.1"
     "@parcel/watcher-win32-x64" "2.5.1"
 
-"@rails/actioncable@^7.0":
+"@rails/actioncable@^6 || ^7", "@rails/actioncable@^7.0":
   version "7.2.201"
   resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-7.2.201.tgz#bfb3da01b3e2462f5a18f372c52dedd7de76037f"
   integrity sha512-wsTdWoZ5EfG5k3t7ORdyQF0ZmDEgN4aVPCanHAiNEwCROqibSZMXXmCbH7IDJUVri4FOeAVwwbPINI7HVHPKBw==
@@ -451,6 +451,13 @@ braces@^3.0.3:
   integrity sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==
   dependencies:
     fill-range "^7.1.1"
+
+cable_ready@^5.0.6:
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/cable_ready/-/cable_ready-5.0.6.tgz#d76f7500d73606175645a84aa743b22667c0109a"
+  integrity sha512-SRCLljXFeFVRDeE/f/LutWNo50pkZRPxkKtFhqVMYvCOZhnUTWH3pPjsn8bD9KlRAMUrlrBN6reX8xX7ItvqfA==
+  dependencies:
+    morphdom "2.6.1"
 
 chokidar@^4.0.3:
   version "4.0.3"
@@ -671,10 +678,27 @@ mkdirp@^3.0.1:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-3.0.1.tgz#e44e4c5607fb279c168241713cc6e0fea9adcb50"
   integrity sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==
 
+morphdom@2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/morphdom/-/morphdom-2.6.1.tgz#e868e24f989fa3183004b159aed643e628b4306e"
+  integrity sha512-Y8YRbAEP3eKykroIBWrjcfMw7mmwJfjhqdpSvoqinu8Y702nAwikpXcNFDiIkyvfCLxLM9Wu95RZqo4a9jFBaA==
+
+"morphdom@>=2.6.0 <3.0.0":
+  version "2.7.5"
+  resolved "https://registry.yarnpkg.com/morphdom/-/morphdom-2.7.5.tgz#1f3942c85df3745a28674c41ddad572910259c05"
+  integrity sha512-z6bfWFMra7kBqDjQGHud1LSXtq5JJC060viEkQFMBX6baIecpkNr2Ywrn2OQfWP3rXiNFQRPoFjD8/TvJcWcDg==
+
 mri@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/mri/-/mri-1.2.0.tgz#6721480fec2a11a4889861115a48b6cbe7cc8f0b"
   integrity sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==
+
+mrujs@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/mrujs/-/mrujs-1.0.2.tgz#f19818735d8f5865dab75254f4cfc38d33804f2e"
+  integrity sha512-dGTUHLH+COsGOn78R7lUFUK/eDLaY8W14N25EymB6lXknENeyoVL31Hsxfb2hEsMb2yjBx0cB//ibO/NTECIzQ==
+  dependencies:
+    morphdom ">=2.6.0 <3.0.0"
 
 node-addon-api@^7.0.0:
   version "7.1.1"
@@ -740,6 +764,20 @@ source-map-js@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.2.1.tgz#1ce5650fddd87abc099eda37dcff024c2667ae46"
   integrity sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==
+
+"stimulus@npm:@hotwired/stimulus":
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/@hotwired/stimulus/-/stimulus-3.2.2.tgz#071aab59c600fed95b97939e605ff261a4251608"
+  integrity sha512-eGeIqNOQpXoPAIP7tC1+1Yc1yl1xnwYqg+3mzqxyrbE5pg5YFBZcA6YoTiByJB6DKAEsiWtl6tjTJS4IYtbB7A==
+
+stimulus_reflex@^3.5.3:
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/stimulus_reflex/-/stimulus_reflex-3.5.3.tgz#4c73bae6fa9622ca1b835b856782de9aa289a90a"
+  integrity sha512-ejNesmnqAQ0qHMT2oomkC50W/ZY3I4Bi9NmfKOiN9a1esHo7yFOouKhADouIWT59Qyu8ddWr8SDpKTX/Eit67g==
+  dependencies:
+    "@hotwired/stimulus" "^3"
+    "@rails/actioncable" "^6 || ^7"
+    cable_ready "^5.0.6"
 
 supports-preserve-symlinks-flag@^1.0.0:
   version "1.0.0"
