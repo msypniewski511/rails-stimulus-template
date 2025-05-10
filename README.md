@@ -25,7 +25,7 @@ Instead of spending hours configuring Tailwind, Redis, StimulusReflex, and other
 Create a new app using this template:
 
 ```bash
-rails new my_app -d postgresql --skip-javascript -m https://raw.githubusercontent.com/msypniewski511/rails-stimulus-template/main/template.rb
+rails new my_app -T -d postgresql --css=tailwind --javascript=esbuild -m https://raw.githubusercontent.com/msypniewski511/rails-stimulus-template/main/template.rb
 cd my_app
 bundle install
 rails db:create
